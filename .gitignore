@@ -60,7 +60,8 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
-
-
+<<<<<<< HEAD
 /.idea/
 /__pycache__/
+=======
+>>>>>>> 28b764c9ed124d41e687188dfc64e5e4d2bd044a
