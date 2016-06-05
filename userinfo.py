@@ -28,7 +28,7 @@ class Userinfo(object):
         }
 
     def save(self):
-        mongodb.fzweibouser.insert_one(self.data)
+        mongodb.qwweibouser.insert_one(self.data)
 
     def find(self):
-        return mongodb.fzweibouser.find_one({'uid':self.uid})
+        return mongodb.qwweibouser.find_one({'uid':self.uid})

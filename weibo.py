@@ -25,7 +25,7 @@ def ungzip(data):
     return data
 
 def getopener():
-    proxy=urllib.request.ProxyHandler({'http': 'http://101.96.10.47:95/'})
+    proxy=urllib.request.ProxyHandler({'http': 'http://121.69.22.6:8118/'})
     cj = http.cookiejar.CookieJar()
     pro = urllib.request.HTTPCookieProcessor(cj)
     opener = urllib.request.build_opener(pro,proxy)
@@ -46,7 +46,7 @@ opener = getopener()
 data = opener.open('https://passport.weibo.cn/sso/login',postdata)
 
 findurl='http://weibo.cn/find/user?'
-def getfinddata(page,school='福州大学'):
+def getfinddata(page,school='清华大学'):
     return { 'scho' :school,
              'gender':'0',
              'sschocomp':'1',
@@ -58,10 +58,11 @@ def getfinddata(page,school='福州大学'):
 
 def getinfo(user,address):
     global m
-    data=opener.open(user).read()
-    page=pq(data)
-    readdata=data.decode('utf-8')
     try:
+        data=opener.open(user,timeout=10).read()
+        page=pq(data)
+        readdata=data.decode('utf-8')
+
         uid=idpattern.search(readdata).group(1)
         res = page('.ut .ctt:first').text().split()
         name = res[0]
@@ -96,18 +97,19 @@ def getuser(page):
 
     finddata = urllib.parse.urlencode(getfinddata(page))
     url = findurl + finddata
-    data = opener.open(url)
-    data = data.read()
-    xy=pq(data)
-    data=data.decode('utf-8')
-    user=xy('table td:first a:first')
     try:
+        data = opener.open(url,timeout=10)
+        data = data.read()
+        xy=pq(data)
+        data=data.decode('utf-8')
+        user=xy('table td:first a:first')
+
         while(i<user.length):
             n = addresspattern.search(data,begin)
             address = n.group(1)
             begin = n.end()
             name = xy('table td:eq(1) a:first')
-            if(mongodb.fzweibouser.find_one({'name':name.eq(i).text()})):
+            if(mongodb.qwweibouser.find_one({'name':name.eq(i).text()})):
                 print("---已保存%s的账号信息" % name.eq(i).text())
                 i+= 1
                 continue
@@ -118,6 +120,6 @@ def getuser(page):
         print("***出现错误 无法打开搜索界面" )
         print(e)
         return
-
-for x in range(0,401):
-    getuser(x+1)
+for y in range(2):
+    for x in range(100,401):
+        getuser(x+1)
