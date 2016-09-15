@@ -1,4 +1,4 @@
-import mongodb
+import mongodb  #微博个人信息module
 class Article(object):
     def __init__(self,title,author,date,text):
         self.title=title
