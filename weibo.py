@@ -9,13 +9,15 @@ import mongodb
 
 
 m=1
-idpattern = re.compile(r'href="/(\d+)/info')
-artsumpattern = re.compile(r'>微博\[(\d+)\]<')
-followspattern = re.compile(r'>关注\[(\d+)\]<')
-fanspattern = re.compile(r'>粉丝\[(\d+)\]<')
-addresspattern = re.compile(r'粉丝\d+人&nbsp;(.*?)<')
 
-def ungzip(data):
+#提取信息的正则表达式
+idpattern = re.compile(r'href="/(\d+)/info')    #id
+artsumpattern = re.compile(r'>微博\[(\d+)\]<')    #总文章数
+followspattern = re.compile(r'>关注\[(\d+)\]<')  # 关注数
+fanspattern = re.compile(r'>粉丝\[(\d+)\]<')
+addresspattern = re.compile(r'粉丝\d+人&nbsp;(.*?)<')    #地址
+
+def ungzip(data):   #gzip解压模块
     try:        # 尝试解压
         print('正在解压.....')
         data = gzip.decompress(data)
@@ -24,7 +26,7 @@ def ungzip(data):
         print('未经压缩, 无需解压')
     return data
 
-def getopener():
+def getopener():  # 生成opener添加代理 useragent cookie处理
     proxy=urllib.request.ProxyHandler({'http': 'http://121.69.22.6:8118/'})
     cj = http.cookiejar.CookieJar()
     pro = urllib.request.HTTPCookieProcessor(cj)
@@ -33,20 +35,21 @@ def getopener():
                        ('Origin', 'https://passport.weibo.cn'),('Referer', 'https://passport.weibo.cn/signin/login?entry=mweibo&res=wel&wm=3349&r=http%3A%2F%2Fm.weibo.cn%2F')]
     return opener
 
-id='15589721246'
-password='a123456'
+id=''            #微博账号
+password=''     #微博密码
+#以下是登录过程post的数据
 postdata={'username':id,
           'password':password,
           'entry':'mweibo',
           'pagerefer':'https://passport.weibo.cn/signin/welcome?entry=mweibo&r=http%3A%2F%2Fm.weibo.cn%2F&wm=3349&vt=4',
           'savestate':'1'
           }
-postdata = urllib.parse.urlencode(postdata).encode()
+postdata = urllib.parse.urlencode(postdata).encode() #处理编码方式
 opener = getopener()
 data = opener.open('https://passport.weibo.cn/sso/login',postdata)
 
 findurl='http://weibo.cn/find/user?'
-def getfinddata(page,school='清华大学'):
+def getfinddata(page,school='清华大学'):  #定义学校关键字 也是posst数据的一部分
     return { 'scho' :school,
              'gender':'0',
              'sschocomp':'1',
@@ -56,7 +59,7 @@ def getfinddata(page,school='清华大学'):
              }
 
 
-def getinfo(user,address):
+def getinfo(user,address):   #单用户界面爬取
     global m
     try:
         data=opener.open(user,timeout=10).read()
