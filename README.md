@@ -1,10 +1,10 @@
 ##微博基于学校的用户信息爬虫
 
-    开发环境: python3 + mongodb
+> 开发环境: python3 + mongodb
 
 运行方式：<code>python weibo.py</code>
 
-注意：
+    注意：
 
 *  请现在weibo.py中添加微博账号和密码
 
